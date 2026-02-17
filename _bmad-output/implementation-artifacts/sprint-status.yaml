@@ -45,7 +45,7 @@ development_status:
   epic-2: backlog
   2-1-task-creation: done
   2-2-task-dashboard: done
-  2-3-edit-delete: backlog
+  2-3-edit-delete: done
   epic-2-retrospective: optional
   epic-3: backlog
   3-1-intelligent-task-breakdown: backlog

@@ -10,6 +10,8 @@ export const createTaskSchema = z.object({
     status: z.nativeEnum(TaskStatus).optional(),
 });
 
+export const updateTaskSchema = createTaskSchema.partial();
+
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 
 export type TaskFilters = {

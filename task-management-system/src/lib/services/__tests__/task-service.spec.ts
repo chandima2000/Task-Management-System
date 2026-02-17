@@ -80,4 +80,46 @@ describe('TaskService', () => {
             })
         })
     })
+
+    describe('updateTask', () => {
+        const userId = 1
+        const taskId = 10
+        const mockTask = { id: taskId, userId: 1 }
+
+        it('should update task if user is owner', async () => {
+            prismaMock.task.findUnique.mockResolvedValue(mockTask as any)
+            prismaMock.task.update.mockResolvedValue({ ...mockTask, title: 'Updated' } as any)
+
+            const result = await TaskService.updateTask(taskId, userId, { title: 'Updated' })
+            expect(result.title).toBe('Updated')
+        })
+
+        it('should throw FORBIDDEN if user is not owner', async () => {
+            prismaMock.task.findUnique.mockResolvedValue({ id: taskId, userId: 2 } as any)
+
+            await expect(TaskService.updateTask(taskId, userId, { title: 'Updated' }))
+                .rejects.toThrow('FORBIDDEN')
+        })
+    })
+
+    describe('deleteTask', () => {
+        const userId = 1
+        const taskId = 10
+        const mockTask = { id: taskId, userId: 1 }
+
+        it('should delete task if user is owner', async () => {
+            prismaMock.task.findUnique.mockResolvedValue(mockTask as any)
+            prismaMock.task.delete.mockResolvedValue(mockTask as any)
+
+            await TaskService.deleteTask(taskId, userId)
+            expect(prismaMock.task.delete).toHaveBeenCalledWith({ where: { id: taskId } })
+        })
+
+        it('should throw FORBIDDEN if user is not owner', async () => {
+            prismaMock.task.findUnique.mockResolvedValue({ id: taskId, userId: 2 } as any)
+
+            await expect(TaskService.deleteTask(taskId, userId))
+                .rejects.toThrow('FORBIDDEN')
+        })
+    })
 })
