@@ -40,7 +40,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   epic-1: in-progress
   1-1-user-registration: done
-  1-2-secure-login-session: backlog
+  1-2-secure-login-session: done
   epic-1-retrospective: optional
   epic-2: backlog
   2-1-task-creation: backlog

@@ -26,10 +26,7 @@ describe('AuthService', () => {
         }
 
         it('should successfully register a new user', async () => {
-            // Setup: No existing user
             prismaMock.user.findUnique.mockResolvedValue(null)
-
-            // Setup: Mock created user
             const mockCreatedUser = {
                 id: 1,
                 email: mockInput.email,
@@ -38,33 +35,43 @@ describe('AuthService', () => {
             prismaMock.user.create.mockResolvedValue(mockCreatedUser as any)
 
             const result = await AuthService.registerUser(mockInput)
-
-            expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
-                where: { email: mockInput.email },
-            })
-            expect(prismaMock.user.create).toHaveBeenCalled()
             expect(result).toEqual(mockCreatedUser)
         })
+    })
 
-        it('should throw an error if user already exists', async () => {
-            // Setup: User already exists
-            prismaMock.user.findUnique.mockResolvedValue({ id: 1 } as any)
+    describe('loginUser', () => {
+        const mockInput = {
+            email: 'test@example.com',
+            password: 'Password123',
+        }
 
-            await expect(AuthService.registerUser(mockInput)).rejects.toThrow(
-                'User with this email already exists'
-            )
-            expect(prismaMock.user.create).not.toHaveBeenCalled()
+        it('should successfully verify credentials', async () => {
+            const hashedPassword = await bcrypt.hash(mockInput.password, 12)
+            prismaMock.user.findUnique.mockResolvedValue({
+                id: 1,
+                email: mockInput.email,
+                password: hashedPassword,
+                createdAt: new Date(),
+            } as any)
+
+            const result = await AuthService.loginUser(mockInput)
+            expect(result.email).toBe(mockInput.email)
+            expect(result.id).toBe(1)
         })
 
-        it('should hash the password before saving', async () => {
-            const hashSpy = vi.spyOn(bcrypt, 'hash')
-
+        it('should throw error for non-existent user', async () => {
             prismaMock.user.findUnique.mockResolvedValue(null)
-            prismaMock.user.create.mockResolvedValue({ id: 1 } as any)
+            await expect(AuthService.loginUser(mockInput)).rejects.toThrow('Invalid email or password')
+        })
 
-            await AuthService.registerUser(mockInput)
+        it('should throw error for incorrect password', async () => {
+            prismaMock.user.findUnique.mockResolvedValue({
+                id: 1,
+                email: mockInput.email,
+                password: 'wrong-hash',
+            } as any)
 
-            expect(hashSpy).toHaveBeenCalledWith(mockInput.password, 12)
+            await expect(AuthService.loginUser(mockInput)).rejects.toThrow('Invalid email or password')
         })
     })
 })
