@@ -17,22 +17,22 @@ so that I can start managing my personal tasks.
 
 ## Tasks / Subtasks
 
-- [ ] Define User model in Prisma schema (AC: #1, #2)
-  - [ ] Add `email` (unique) and `password` fields
-  - [ ] Run `npx prisma migrate dev`
-- [ ] Create Zod validation schema (AC: #3)
-  - [ ] Define `registerSchema` in `src/lib/validations/auth.ts`
-- [ ] Implement AuthService registration logic (AC: #1, #2)
-  - [ ] Create `src/lib/services/auth-service.ts`
-  - [ ] Implement `registerUser` with password hashing (bcryptjs)
-  - [ ] Handle duplicate email errors
-- [ ] Create API Route for registration (AC: #3, #4)
-  - [ ] Create `src/app/api/auth/register/route.ts`
-  - [ ] Implement POST handler calling `AuthService`
-- [ ] Write Unit/Integration Tests (AC: #1-4)
-  - [ ] Test successful registration
-  - [ ] Test duplicate email failure
-  - [ ] Test validation failures
+- [x] Define User model in Prisma schema (AC: #1, #2)
+  - [x] Add `email` (unique) and `password` fields
+  - [x] Run `npx prisma migrate dev`
+- [x] Create Zod validation schema (AC: #3)
+  - [x] Define `registerSchema` in `src/lib/validations/auth.ts`
+- [x] Implement AuthService registration logic (AC: #1, #2)
+  - [x] Create `src/lib/services/auth-service.ts`
+  - [x] Implement `registerUser` with password hashing (bcryptjs)
+  - [x] Handle duplicate email errors
+- [x] Create API Route for registration (AC: #3, #4)
+  - [x] Create `src/app/api/auth/register/route.ts`
+  - [x] Implement POST handler calling `AuthService`
+- [/] Write Unit/Integration Tests (AC: #1-4)
+  - [x] Test successful registration
+  - [x] Test duplicate email failure
+  - [x] Test validation failures
 
 ## Dev Notes
 
