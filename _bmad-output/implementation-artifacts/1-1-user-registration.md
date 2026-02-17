@@ -1,6 +1,6 @@
 # Story 1.1: User Registration
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -29,7 +29,7 @@ so that I can start managing my personal tasks.
 - [x] Create API Route for registration (AC: #3, #4)
   - [x] Create `src/app/api/auth/register/route.ts`
   - [x] Implement POST handler calling `AuthService`
-- [/] Write Unit/Integration Tests (AC: #1-4)
+- [x] Write Unit/Integration Tests (AC: #1-4)
   - [x] Test successful registration
   - [x] Test duplicate email failure
   - [x] Test validation failures
