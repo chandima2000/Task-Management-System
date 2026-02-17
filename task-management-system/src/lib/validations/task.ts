@@ -11,3 +11,7 @@ export const createTaskSchema = z.object({
 });
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
+
+export type TaskFilters = {
+    status?: TaskStatus;
+};
