@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { POST } from '../route'
+import { GET, POST } from '../route'
 import { TaskService } from '@/lib/services/task-service'
 import { verifySessionToken } from '@/lib/auth'
 
@@ -59,6 +59,38 @@ describe('Task API Routes', () => {
 
             const response = await POST(request)
             expect(response.status).toBe(400)
+        })
+    })
+
+    describe('GET /api/tasks', () => {
+        it('should return 200 and user tasks', async () => {
+            const mockTasks = [{ id: 1, title: 'My Task', userId: 1 }]
+            vi.mocked(verifySessionToken).mockResolvedValue({ id: 1 })
+            vi.mocked(TaskService.getTasks).mockResolvedValue(mockTasks as any)
+
+            const mockCookieStore = { get: vi.fn().mockReturnValue({ value: 'valid-token' }) }
+            vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
+
+            const request = new Request('http://localhost/api/tasks')
+            const response = await GET(request)
+            const data = await response.json()
+
+            expect(response.status).toBe(200)
+            expect(data).toEqual(mockTasks)
+            expect(TaskService.getTasks).toHaveBeenCalledWith(1, {})
+        })
+
+        it('should apply status filter from query params', async () => {
+            vi.mocked(verifySessionToken).mockResolvedValue({ id: 1 })
+            vi.mocked(TaskService.getTasks).mockResolvedValue([])
+
+            const mockCookieStore = { get: vi.fn().mockReturnValue({ value: 'valid-token' }) }
+            vi.mocked(cookies).mockResolvedValue(mockCookieStore as any)
+
+            const request = new Request('http://localhost/api/tasks?status=TODO')
+            await GET(request)
+
+            expect(TaskService.getTasks).toHaveBeenCalledWith(1, { status: 'TODO' })
         })
     })
 })

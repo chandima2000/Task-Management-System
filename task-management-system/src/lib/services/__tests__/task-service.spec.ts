@@ -48,4 +48,36 @@ describe('TaskService', () => {
             })
         })
     })
+
+    describe('getTasks', () => {
+        const userId = 1
+        const mockTasks = [
+            { id: 1, title: 'Task 1', status: TaskStatus.TODO, userId },
+            { id: 2, title: 'Task 2', status: TaskStatus.DONE, userId },
+        ]
+
+        it('should fetch all tasks for a user', async () => {
+            prismaMock.task.findMany.mockResolvedValue(mockTasks as any)
+
+            const result = await TaskService.getTasks(userId)
+            expect(result).toEqual(mockTasks)
+            expect(prismaMock.task.findMany).toHaveBeenCalledWith({
+                where: { userId },
+                orderBy: { createdAt: 'desc' },
+                select: expect.any(Object),
+            })
+        })
+
+        it('should fetch filtered tasks for a user', async () => {
+            prismaMock.task.findMany.mockResolvedValue([mockTasks[0]] as any)
+
+            const result = await TaskService.getTasks(userId, { status: TaskStatus.TODO })
+            expect(result).toEqual([mockTasks[0]])
+            expect(prismaMock.task.findMany).toHaveBeenCalledWith({
+                where: { userId, status: TaskStatus.TODO },
+                orderBy: { createdAt: 'desc' },
+                select: expect.any(Object),
+            })
+        })
+    })
 })
