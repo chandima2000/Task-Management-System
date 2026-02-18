@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StyledLink } from "@/components/ui/styled-link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
@@ -98,5 +99,13 @@ export default function LoginPage() {
                 <StyledLink href="/auth/register">Create an account</StyledLink>
             </div>
         </AuthCard>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }
