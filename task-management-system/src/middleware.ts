@@ -30,7 +30,7 @@ function handleUnauthenticated(request: NextRequest) {
         );
     }
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/auth/login", request.url));
 }
 
 export const config = {
