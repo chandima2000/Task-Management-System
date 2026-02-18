@@ -25,7 +25,8 @@ export const AIConsultantPanel: React.FC<AIConsultantPanelProps> = ({ isOpen, on
         setResult(null);
 
         try {
-            const response = await fetch("http://localhost:8080/breakdown", {
+            const agentUrl = process.env.NEXT_PUBLIC_AI_AGENT_URL || "http://localhost:8080";
+            const response = await fetch(`${agentUrl}/breakdown`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: goal }),
