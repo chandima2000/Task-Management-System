@@ -7,7 +7,3 @@ node_modules/
 __pycache__/
 *.pyc
 .env
-uv.lock
-pyproject.toml
-Dockerfile
-.dockerignore
