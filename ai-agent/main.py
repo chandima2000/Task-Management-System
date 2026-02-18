@@ -1,5 +1,7 @@
 import json
 import re
+import os
+import sys
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
@@ -97,4 +99,6 @@ async def breakdown_task(task: TaskInput):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    port = int(os.environ.get("PORT", 8080))
+    print(f"--- AI Agent Starting on port {port} ---")
+    uvicorn.run(app, host="0.0.0.0", port=port)
