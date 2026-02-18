@@ -9,6 +9,7 @@ import { TaskForm } from "@/components/dashboard/task-form";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { TaskStatus } from "@/app/generated/prisma/enums";
+import { AIConsultantPanel } from "@/components/dashboard/ai-consultant-panel";
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -17,8 +18,9 @@ export default function DashboardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Modal State
+    // Modal & Panel State
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAIPanelOpen, setIsAIPanelOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<any | null>(null);
 
     const fetchTasks = useCallback(async () => {
@@ -65,6 +67,27 @@ export default function DashboardPage() {
         fetchTasks();
     };
 
+    const handleQuickAddTask = async (title: string, description: string) => {
+        try {
+            const response = await fetch("/api/tasks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    status: "TODO",
+                    priority: "MEDIUM"
+                }),
+            });
+
+            if (!response.ok) throw new Error("Failed to add task from AI suggestion");
+
+            fetchTasks();
+        } catch (err: any) {
+            alert(err.message);
+        }
+    };
+
     const handleUpdateTask = async (data: any) => {
         if (!editingTask) return;
 
@@ -100,6 +123,7 @@ export default function DashboardPage() {
         }
     };
 
+
     const openEditModal = (task: any) => {
         setEditingTask(task);
         setIsModalOpen(true);
@@ -113,19 +137,26 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen p-4 sm:p-8">
+        <div className="min-h-screen p-4 sm:p-8 overflow-x-hidden">
             {/* Header */}
             <header className="mx-auto mb-10 flex max-w-6xl items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-white">Dashboard</h1>
-                    <p className="text-sm text-slate-400">Welcome back to your workspace</p>
+                    <h1 className="text-3xl font-black text-white tracking-tight">Dashboard</h1>
+                    <p className="text-sm text-slate-400 font-medium">Welcome back to your workspace</p>
                 </div>
                 <div className="flex items-center space-x-4">
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsAIPanelOpen(true)}
+                        className="text-xs font-bold uppercase tracking-widest text-primary border-primary/20 hover:text-primary hover:bg-primary/10 transition-all px-4"
+                    >
+                        Ask AI Consultant ✨
+                    </Button>
                     <Button variant="outline" onClick={handleLogout} className="h-10 w-auto px-4">
                         Logout
                     </Button>
                     <Button
-                        className="h-10 w-auto px-6"
+                        className="h-10 w-auto px-6 shadow-lg shadow-primary/20"
                         onClick={() => {
                             setEditingTask(null);
                             setIsModalOpen(true);
@@ -185,6 +216,21 @@ export default function DashboardPage() {
                     onCancel={() => setIsModalOpen(false)}
                 />
             </Modal>
+
+            {/* AI Consultant Backdrop */}
+            {isAIPanelOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-300"
+                    onClick={() => setIsAIPanelOpen(false)}
+                />
+            )}
+
+            {/* AI Consultant Panel */}
+            <AIConsultantPanel
+                isOpen={isAIPanelOpen}
+                onClose={() => setIsAIPanelOpen(false)}
+                onAddTask={handleQuickAddTask}
+            />
         </div>
     );
 }
