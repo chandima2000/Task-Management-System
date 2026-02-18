@@ -18,9 +18,8 @@ export default function DashboardPage() {
     const [error, setError] = useState<string | null>(null);
 
     // Modal State
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<any | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchTasks = useCallback(async () => {
         setIsLoading(true);
@@ -45,57 +44,65 @@ export default function DashboardPage() {
         fetchTasks();
     }, [fetchTasks]);
 
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", { method: "POST" });
+        router.push("/auth/login");
+    };
+
     const handleCreateTask = async (data: any) => {
-        setIsSubmitting(true);
-        try {
-            const response = await fetch("/api/tasks", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) throw new Error("Failed to create task");
-            setIsCreateModalOpen(false);
-            fetchTasks();
-        } catch (err: any) {
-            alert(err.message);
-        } finally {
-            setIsSubmitting(false);
+        const response = await fetch("/api/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(result.error || "Failed to create task");
         }
+
+        setIsModalOpen(false);
+        fetchTasks();
     };
 
     const handleUpdateTask = async (data: any) => {
         if (!editingTask) return;
-        setIsSubmitting(true);
-        try {
-            const response = await fetch(`/api/tasks/${editingTask.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) throw new Error("Failed to update task");
-            setEditingTask(null);
-            fetchTasks();
-        } catch (err: any) {
-            alert(err.message);
-        } finally {
-            setIsSubmitting(false);
+
+        const response = await fetch(`/api/tasks/${editingTask.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(result.error || "Failed to update task");
         }
+
+        setIsModalOpen(false);
+        setEditingTask(null);
+        fetchTasks();
     };
 
     const handleDeleteTask = async (id: number) => {
         if (!confirm("Are you sure you want to delete this task?")) return;
+
         try {
-            const response = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+            const response = await fetch(`/api/tasks/${id}`, {
+                method: "DELETE",
+            });
+
             if (!response.ok) throw new Error("Failed to delete task");
+
             fetchTasks();
         } catch (err: any) {
             alert(err.message);
         }
     };
 
-    const handleLogout = async () => {
-        await fetch("/api/auth/logout", { method: "POST" });
-        router.push("/auth/login");
+    const openEditModal = (task: any) => {
+        setEditingTask(task);
+        setIsModalOpen(true);
     };
 
     const stats = {
@@ -118,8 +125,11 @@ export default function DashboardPage() {
                         Logout
                     </Button>
                     <Button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="h-10 w-auto px-10"
+                        className="h-10 w-auto px-6"
+                        onClick={() => {
+                            setEditingTask(null);
+                            setIsModalOpen(true);
+                        }}
                     >
                         Add New Task
                     </Button>
@@ -149,7 +159,7 @@ export default function DashboardPage() {
                             <TaskCard
                                 key={task.id}
                                 task={task}
-                                onEdit={() => setEditingTask(task)}
+                                onEdit={() => openEditModal(task)}
                                 onDelete={handleDeleteTask}
                             />
                         ))}
@@ -163,32 +173,17 @@ export default function DashboardPage() {
                 )}
             </main>
 
-            {/* Modals */}
+            {/* Task Modal */}
             <Modal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                title="Create New Task"
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title={editingTask ? "Edit Task" : "Create New Task"}
             >
                 <TaskForm
-                    onSubmit={handleCreateTask}
-                    onCancel={() => setIsCreateModalOpen(false)}
-                    isLoading={isSubmitting}
+                    initialData={editingTask}
+                    onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
+                    onCancel={() => setIsModalOpen(false)}
                 />
-            </Modal>
-
-            <Modal
-                isOpen={!!editingTask}
-                onClose={() => setEditingTask(null)}
-                title="Edit Task"
-            >
-                {editingTask && (
-                    <TaskForm
-                        initialData={editingTask}
-                        onSubmit={handleUpdateTask}
-                        onCancel={() => setEditingTask(null)}
-                        isLoading={isSubmitting}
-                    />
-                )}
             </Modal>
         </div>
     );
