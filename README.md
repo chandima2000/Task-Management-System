@@ -1,20 +1,20 @@
-# Task Management System with AI Consultant 🚀🤖
+# Task Management System with AI Consultant
 
 A premium, human-centric Task Management System featuring an integrated AI Planning Consultant. This project uses a hybrid cloud architecture for maximum speed and intelligence.
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 The system is split into two main components:
 1.  **Next.js Frontend**: A high-performance web application coupled with a PostgreSQL database.
 2.  **Python AI Agent**: A standalone intelligence service built with **Google ADK (Agent Development Kit)** to break down complex goals into actionable tasks.
 
-### ☁️ Hybrid Deployment
+### Hybrid Deployment
 -   **Frontend & Database**: Deployed on **Vercel** with **Vercel Postgres** for ultra-fast performance.
 -   **AI Agent**: **[NOT DEPLOYED]** Due to recent cloud restrictions, the AI Agent must be **run locally** to enable the AI Consultant features in the dashboard.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 - Node.js 18+
@@ -52,7 +52,7 @@ uvicorn main:app --port 8080
 
 ---
 
-## ☁️ Deployment Details
+## Deployment Details
 
 ### Vercel (Frontend)
 -   **Connection**: Linked directly to the GitHub repository.
@@ -67,7 +67,7 @@ uvicorn main:app --port 8080
 
 ---
 
-## 🛠️ Environment Variables
+## Environment Variables
 
 ### Frontend (`task-management-system/.env`)
 - `DATABASE_URL`: Connection string for your PostgreSQL database.
@@ -80,9 +80,9 @@ uvicorn main:app --port 8080
 
 ---
 
-## 🛠️ API Documentation
+## API Documentation
 
-### 🤖 AI Agent Service (`ai-agent`)
+### AI Agent Service (`ai-agent`)
 
 #### `POST /breakdown`
 Generates a project roadmap using Gemini.
@@ -92,14 +92,14 @@ Generates a project roadmap using Gemini.
 #### `GET /health`
 Returns the operational status of the agent.
 
-### 🌐 Core Web Application (`task-management-system`)
+### Core Web Application (`task-management-system`)
 
-#### 🔐 Authentication
+#### Authentication
 - `POST /api/auth/register`: Creates a new user account.
 - `POST /api/auth/login`: Authenticates user and sets session cookie.
 - `POST /api/auth/logout`: Clears the user session.
 
-#### 📝 Task Management
+#### Task Management
 - `GET /api/api/tasks`: Returns a list of tasks for the authenticated user.
   - *Query Param*: `status` (TODO, IN_PROGRESS, DONE)
 - `POST /api/api/tasks`: Creates a new task.
@@ -109,7 +109,7 @@ Returns the operational status of the agent.
 
 ---
 
-## ✨ Features
+## Features
 - **Human-Centric UI**: Crafted with a Rose/Zinc palette for a premium SaaS feel.
 - **AI Breakdown**: Consult the AI panel to automatically turn one big goal into a checklist.
 - **Secure Auth**: JWT-based session management.
