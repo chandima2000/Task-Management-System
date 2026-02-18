@@ -137,100 +137,104 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen p-4 sm:p-8 overflow-x-hidden">
-            {/* Header */}
-            <header className="mx-auto mb-10 flex max-w-6xl items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight">Dashboard</h1>
-                    <p className="text-sm text-slate-400 font-medium">Welcome back to your workspace</p>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Button
-                        variant="outline"
-                        onClick={() => setIsAIPanelOpen(true)}
-                        className="text-xs font-bold uppercase tracking-widest text-primary border-primary/20 hover:text-primary hover:bg-primary/10 transition-all px-4"
-                    >
-                        Ask AI Consultant ✨
-                    </Button>
-                    <Button variant="outline" onClick={handleLogout} className="h-10 w-auto px-4">
-                        Logout
-                    </Button>
-                    <Button
-                        className="h-10 w-auto px-6 shadow-lg shadow-primary/20"
-                        onClick={() => {
-                            setEditingTask(null);
-                            setIsModalOpen(true);
-                        }}
-                    >
-                        Add New Task
-                    </Button>
-                </div>
-            </header>
+        <div className="min-h-screen p-4 sm:p-8 overflow-x-hidden relative">
+            {/* Ambient Background Gradient */}
+            <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,_var(--color-primary),_transparent_20%),_radial-gradient(circle_at_bottom_left,_#f59e0b22,_transparent_15%)] opacity-30 pointer-events-none" />
 
-            <main className="mx-auto max-w-6xl space-y-8">
-                {/* Stats Section */}
-                <StatsBar stats={stats} />
+            <div className={`transition-all duration-500 ease-in-out ${isAIPanelOpen ? "mr-96" : "mr-0"}`}>
+                <header className="mx-auto mb-10 flex max-w-7xl items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-black text-white tracking-tighter">Dashboard</h1>
+                        <p className="text-sm text-zinc-400 font-medium tracking-tight">Manage your human objectives</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
+                            className={`text-xs font-bold uppercase tracking-widest transition-all px-4 ${isAIPanelOpen ? "bg-primary text-white border-primary" : "text-primary border-primary/20 hover:bg-primary/10"}`}
+                        >
+                            {isAIPanelOpen ? "Close AI Consultant" : "Ask AI Consultant ✨"}
+                        </Button>
+                        <Button variant="outline" onClick={handleLogout} className="h-10 w-auto px-4 border-zinc-800 text-zinc-400 hover:text-white">
+                            Logout
+                        </Button>
+                        <Button
+                            className="h-10 w-auto px-6 shadow-xl shadow-primary/30"
+                            onClick={() => {
+                                setEditingTask(null);
+                                setIsModalOpen(true);
+                            }}
+                        >
+                            Add New Task
+                        </Button>
+                    </div>
+                </header>
 
-                {/* Filter Section */}
-                <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-glass bg-glass p-4 backdrop-blur-md sm:flex-row">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-                        Your Tasks
-                    </h2>
-                    <StatusFilter activeStatus={activeStatus} onStatusChange={setActiveStatus} />
-                </div>
+                <main className="mx-auto max-w-7xl space-y-10 pb-20">
+                    <StatsBar stats={stats} />
 
-                {/* Task Grid */}
-                {isLoading ? (
-                    <div className="flex h-64 items-center justify-center">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                    {/* Filter Section */}
+                    <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-glass bg-glass p-4 backdrop-blur-md sm:flex-row">
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500">
+                            Your Tasks
+                        </h2>
+                        <StatusFilter activeStatus={activeStatus} onStatusChange={setActiveStatus} />
                     </div>
-                ) : tasks.length > 0 ? (
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {tasks.map((task: any) => (
-                            <TaskCard
-                                key={task.id}
-                                task={task}
-                                onEdit={() => openEditModal(task)}
-                                onDelete={handleDeleteTask}
-                            />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-glass bg-glass/20 text-center">
-                        <div className="mb-4 text-4xl">📭</div>
-                        <h3 className="text-lg font-bold text-white">No tasks found</h3>
-                        <p className="text-sm text-slate-400">Time to dream up something new!</p>
-                    </div>
+
+                    {/* Task Grid */}
+                    {isLoading ? (
+                        <div className="flex h-64 items-center justify-center">
+                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                        </div>
+                    ) : tasks.length > 0 ? (
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {tasks.map((task: any) => (
+                                <TaskCard
+                                    key={task.id}
+                                    task={task}
+                                    onEdit={() => openEditModal(task)}
+                                    onDelete={handleDeleteTask}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-glass bg-glass/20 text-center">
+                            <div className="mb-4 text-4xl">📭</div>
+                            <h3 className="text-lg font-bold text-white">No tasks found</h3>
+                            <p className="text-sm text-slate-400">Time to dream up something new!</p>
+                        </div>
+                    )}
+                </main>
+
+                {/* Task Modal */}
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    title={editingTask ? "Edit Task" : "Create New Task"}
+                >
+                    <TaskForm
+                        initialData={editingTask}
+                        onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
+                        onCancel={() => setIsModalOpen(false)}
+                    />
+                </Modal>
+
+                {/* AI Consultant Backdrop */}
+                {isAIPanelOpen && (
+                    <div
+                        className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-300"
+                        onClick={() => setIsAIPanelOpen(false)}
+                    />
                 )}
-            </main>
 
-            {/* Task Modal */}
-            <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title={editingTask ? "Edit Task" : "Create New Task"}
-            >
-                <TaskForm
-                    initialData={editingTask}
-                    onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
-                    onCancel={() => setIsModalOpen(false)}
+                {/* AI Consultant Panel */}
+                <AIConsultantPanel
+                    isOpen={isAIPanelOpen}
+                    onClose={() => setIsAIPanelOpen(false)}
+                    onAddTask={handleQuickAddTask}
                 />
-            </Modal>
-
-            {/* AI Consultant Backdrop */}
-            {isAIPanelOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-300"
-                    onClick={() => setIsAIPanelOpen(false)}
-                />
-            )}
-
-            {/* AI Consultant Panel */}
-            <AIConsultantPanel
-                isOpen={isAIPanelOpen}
-                onClose={() => setIsAIPanelOpen(false)}
-                onAddTask={handleQuickAddTask}
-            />
+            </div>
         </div>
     );
 }
+
